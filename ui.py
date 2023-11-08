@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 from data import question_data
 from quiz_brain import QuizBrain
 from question_model import Question
@@ -16,14 +17,14 @@ class QuizInterface:
         self.window.title("Quizzler")
         self.window.config(padx=20, pady=20, background=THEME_COLOR)
 
-        label = Label(text=f"Score: {self.__score}", background=THEME_COLOR, foreground="white",
-                      font=("arial", 9))
-        label.grid(row=0, column=1, padx=20, pady=20)
+        self.label = Label(text=f"Score: {self.__score}", background=THEME_COLOR, foreground="white",
+                           font=("arial", 9))
+        self.label.grid(row=0, column=1, padx=20, pady=20)
 
         self.canvas = Canvas(self.window, height=250, width=300)
         self.canvas.config(highlightthickness=0)
         self.question = self.canvas.create_text(
-            150, 125, text="", font=("Arial", 20, "italic"))
+            150, 125, width=280, text="", font=("Arial", 20, "italic"))
         self.canvas.grid(row=1, column=0, columnspan=2)
 
         trueImage = PhotoImage(file="images/true.png")
@@ -55,9 +56,18 @@ class QuizInterface:
             nextQuestion = self.quiz.next_question()
             self.canvas.itemconfig(
                 self.question, text=f"{nextQuestion}", fill=THEME_COLOR)
+        else:
+            messagebox.askquestion(
+                title="Game over!",
+                message=f"Game over!, your final score is {self.__score} out of {self.quiz.question_number}\ndo you want to continue?",)
 
     def selectedTrue(self):
-        pass
+        self.quiz.check_answer("true")
+        self.__score = self.quiz.score
+        self.label.config(
+            text=f"Score: {self.__score}")
+        self.getQuestion()
 
     def selectedFalse(self):
-        pass
+        self.quiz.check_answer("false")
+        self.getQuestion()
