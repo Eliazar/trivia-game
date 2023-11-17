@@ -52,6 +52,8 @@ class QuizInterface:
         self.getQuestion()
 
     def getQuestion(self):
+        self.canvas.config(bg="white")
+
         if (self.quiz.still_has_questions()):
             nextQuestion = self.quiz.next_question()
             self.canvas.itemconfig(
@@ -62,12 +64,24 @@ class QuizInterface:
                 message=f"Game over!, your final score is {self.__score} out of {self.quiz.question_number}\ndo you want to continue?",)
 
     def selectedTrue(self):
-        self.quiz.check_answer("true")
+        isCorrect = self.quiz.check_answer("true")
         self.__score = self.quiz.score
         self.label.config(
             text=f"Score: {self.__score}")
-        self.getQuestion()
+        self.answerFeedback(isCorrect)
+        # self.getQuestion()
 
     def selectedFalse(self):
-        self.quiz.check_answer("false")
-        self.getQuestion()
+        isCorrect = self.quiz.check_answer("false")
+        self.label.config(
+            text=f"Score: {self.__score}")
+        self.answerFeedback(isCorrect)
+        # self.getQuestion()
+
+    def answerFeedback(self, isCorrect: bool):
+        if isCorrect:
+            self.canvas.config(bg="green")
+        else:
+            self.canvas.config(bg="red")
+
+        self.window.after(1000, self.getQuestion)
