@@ -59,9 +59,12 @@ class QuizInterface:
             self.canvas.itemconfig(
                 self.question, text=f"{nextQuestion}", fill=THEME_COLOR)
         else:
-            messagebox.askquestion(
+            selectedOption = messagebox.askquestion(
                 title="Game over!",
                 message=f"Game over!, your final score is {self.__score} out of {self.quiz.question_number}\ndo you want to continue?",)
+
+            if (selectedOption == "yes"):
+                self.resetGame()
 
     def selectedTrue(self):
         isCorrect = self.quiz.check_answer("true")
@@ -69,14 +72,13 @@ class QuizInterface:
         self.label.config(
             text=f"Score: {self.__score}")
         self.answerFeedback(isCorrect)
-        # self.getQuestion()
 
     def selectedFalse(self):
         isCorrect = self.quiz.check_answer("false")
+        self.__score = self.quiz.score
         self.label.config(
             text=f"Score: {self.__score}")
         self.answerFeedback(isCorrect)
-        # self.getQuestion()
 
     def answerFeedback(self, isCorrect: bool):
         if isCorrect:
@@ -85,3 +87,8 @@ class QuizInterface:
             self.canvas.config(bg="red")
 
         self.window.after(1000, self.getQuestion)
+
+    def resetGame(self):
+        self.quiz.score = 0
+        self.__setQuestionBank()
+        pass
